@@ -21,25 +21,28 @@ namespace Server
         }
         public void Run()
         {
-           
-                    AcceptClient();
-             
-                while (true)
-                {
-                    string message = client.Recieve();
-                    Respond(message);
-                }
-            
+            AcceptClient();
 
-            
+            while (true)
+            {
+                string message = client.Recieve();
+                Respond(message);
+                
+            }
         }
+        
         private void AcceptClient()
         {
+            
             TcpClient clientSocket = default(TcpClient);
             clientSocket = server.AcceptTcpClient();
             Console.WriteLine("Connected");
             NetworkStream stream = clientSocket.GetStream();
-            client = new Client(stream, clientSocket);
+            Parallel.Invoke(() =>
+               {
+                   client = new Client(stream, clientSocket);
+
+               });
         }
         private void Respond(string body)
         {

@@ -20,8 +20,8 @@ namespace Server
         }
         public string GetUserID()
         {
-            Console.WriteLine("Enter User ID");
-            return Console.ReadLine();
+            Send("Enter User ID");
+            return UserId;
         }
         public void Send(string Message)
         {
