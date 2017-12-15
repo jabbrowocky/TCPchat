@@ -12,12 +12,21 @@ namespace Client
     {
         TcpClient clientSocket;
         NetworkStream stream;
+        string defaultServerIP = "127.0.0.1";
 
         public Client(string IP, int port)
         {
+            IP = SetServerIP();
             clientSocket = new TcpClient();
             clientSocket.Connect(IPAddress.Parse(IP), port);
             stream = clientSocket.GetStream();
+        }
+        
+        public string SetServerIP()
+        {
+            Console.WriteLine("What is the IP of the server you would like to connect to?");
+            defaultServerIP = Console.ReadLine();
+            return defaultServerIP;
         }
         public void Send()
         {
