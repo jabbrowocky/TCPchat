@@ -14,39 +14,68 @@ namespace Server
     {
         public static Client client;
         TcpListener server;
+
+        Dictionary<int, Client> user = new Dictionary<int, Client>(); //add users to dictionary
+        int userID = 0;
+        Queue<string> queueMessage = new Queue<string>(); //add messages to queue
+
+        List<string> observer; //observer method
+
         public Server()
         {
-            server = new TcpListener(IPAddress.Parse("192.168.0.127"), 9999);
+            server = new TcpListener(IPAddress.Parse("192.168.0.118"), 9999);
             server.Start();
         }
+
         public void Run()
         {
-            AcceptClient();
-
-            while (true)
-            {
-                string message = client.Recieve();
-                Respond(message);
-                
-            }
+            Task.Run(() => AcceptClient());
         }
-        
+
         private void AcceptClient()
         {
-            
-            TcpClient clientSocket = default(TcpClient);
-            clientSocket = server.AcceptTcpClient();
-            Console.WriteLine("Connected");
-            NetworkStream stream = clientSocket.GetStream();
-            Parallel.Invoke(() =>
-               {
-                   client = new Client(stream, clientSocket);
-
-               });
+            while (true)
+            {
+                TcpClient clientSocket = default(TcpClient);
+                clientSocket = server.AcceptTcpClient();
+                Console.WriteLine("Connected");
+                NetworkStream stream = clientSocket.GetStream();
+                client = new Client(stream, clientSocket);
+                AddToDictionary(client);
+                Task.Run(() => Recieve());
+            }
         }
-        private void Respond(string body)
+        private void Send(string body)
         {
-             client.Send(body);
+            Client temp;
+            string message = body;
+            //while (true)
+            //{
+            foreach (KeyValuePair<int, Client> userID in user)
+            {
+                temp = userID.Value;
+                temp.Send(message);
+            }
+            //}
         }
+
+        public void Recieve()
+        {
+            while (true)
+            {
+                string message = client.Recieve(queueMessage);
+                Task.Run(() => Send(message));
+            }
+        }
+
+        public void AddToDictionary(Client client)
+        {
+            userID++;
+            user.Add(userID, client);
+        }
+
+        //dependency injection
+
+
     }
 }

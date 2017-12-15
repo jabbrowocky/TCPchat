@@ -10,30 +10,24 @@ namespace Client
     {
         static void Main(string[] args)
         {
-            Client client = new Client("192.168.0.127", 9999);
-            string userInput = "";
-            Parallel.Invoke(() => 
-            {
-                while (client.clientIsOpen)
-                {
-                    client.Send();              
-                    
+            Client client = new Client("192.168.0.118", 9999); //127.0.0.1
 
+            Parallel.Invoke(() =>
+            {
+                while (true)
+                {
+                    client.Send();
                 }
             },
             () =>
             {
-                while (client.clientIsOpen)
+                while (true)
                 {
-                    
                     client.Recieve();
-                    
-                   
-                }                
-                
-            }
-            );
+                }
+            });
+
+            Console.ReadLine();
         }
     }
 }
-
