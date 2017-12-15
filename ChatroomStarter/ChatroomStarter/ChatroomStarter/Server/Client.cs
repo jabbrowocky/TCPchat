@@ -17,14 +17,29 @@ namespace Server
 
         public Client(NetworkStream Stream, TcpClient Client)
         {
+            
             stream = Stream;
             client = Client;
-            UserId = "495933b6-1762-47a1-b655-483510072e73";
+            SendUserIDPrompt("What is your username?");
+            UserId = RecieveUserID();
         }
         public void Send(string Message)
         {
             byte[] message = Encoding.ASCII.GetBytes(Message);
             stream.Write(message, 0, message.Count());
+        }
+        public void SendUserIDPrompt(string Message)
+        {
+            
+            byte[] message = Encoding.ASCII.GetBytes(Message);
+            stream.Write(message, 0, message.Count());
+        }
+        public string RecieveUserID()
+        {
+            byte[] recievedMessage = new byte[256];
+            stream.Read(recievedMessage, 0, recievedMessage.Length);
+            string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
+            return recievedMessageString;
         }
         public string Recieve(Queue<string> queueMessage)
         {

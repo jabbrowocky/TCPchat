@@ -17,6 +17,7 @@ namespace Client
         public Client(string IP, int port)
         {
             IP = SetServerIP();
+            
             clientSocket = new TcpClient();
             clientSocket.Connect(IPAddress.Parse(IP), port);
             stream = clientSocket.GetStream();
@@ -28,6 +29,7 @@ namespace Client
             defaultServerIP = Console.ReadLine();
             return defaultServerIP;
         }
+        
         public void Send()
         {
             //while (true)

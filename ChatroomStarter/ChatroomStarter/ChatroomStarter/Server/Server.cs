@@ -34,17 +34,19 @@ namespace Server
 
         private void AcceptClient()
         {
+            
             while (true)
             {
                 TcpClient clientSocket = default(TcpClient);
                 clientSocket = server.AcceptTcpClient();
                 Console.WriteLine("Connected");
-                NetworkStream stream = clientSocket.GetStream();
+                NetworkStream stream = clientSocket.GetStream();                
                 client = new Client(stream, clientSocket);
-                AddToDictionary(client);
+                AddToDictionary(client);                
                 Task.Run(() => Recieve());
             }
         }
+        
         private void Send(string body)
         {
             Client temp;
@@ -64,7 +66,7 @@ namespace Server
             while (true)
             {
                 string message = client.Recieve(queueMessage);
-                Task.Run(() => Send(message));
+                Send(message);
             }
         }
 
