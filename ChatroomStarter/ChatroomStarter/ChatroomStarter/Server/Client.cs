@@ -7,39 +7,24 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Client
+    public class Client
     {
-        NetworkStream stream;
-        TcpClient client;
+        public NetworkStream stream;
+        public TcpClient client;
         public string UserId;
+        Server server;
 
-        //private List<IClient> 
-
-        public Client(NetworkStream Stream, TcpClient Client)
+        public Client(NetworkStream Stream, TcpClient Client, Server server)
         {
-            
+            this.server = server;
             stream = Stream;
             client = Client;
-            SendUserIDPrompt("What is your username?");
-            UserId = RecieveUserID();
+            UserId = "495933b6-1762-47a1-b655-483510072e73";
         }
         public void Send(string Message)
         {
             byte[] message = Encoding.ASCII.GetBytes(Message);
             stream.Write(message, 0, message.Count());
-        }
-        public void SendUserIDPrompt(string Message)
-        {
-            
-            byte[] message = Encoding.ASCII.GetBytes(Message);
-            stream.Write(message, 0, message.Count());
-        }
-        public string RecieveUserID()
-        {
-            byte[] recievedMessage = new byte[256];
-            stream.Read(recievedMessage, 0, recievedMessage.Length);
-            string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
-            return recievedMessageString;
         }
         public string Recieve(Queue<string> queueMessage)
         {
@@ -50,6 +35,5 @@ namespace Server
             Console.WriteLine(recievedMessageString);
             return recievedMessageString;
         }
-
     }
 }

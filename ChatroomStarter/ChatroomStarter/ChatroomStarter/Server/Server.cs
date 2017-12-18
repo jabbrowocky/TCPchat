@@ -10,74 +10,76 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Server
+    public class Server
     {
         public static Client client;
         TcpListener server;
 
-        Dictionary<int, Client> user = new Dictionary<int, Client>(); //add users to dictionary
+        Dictionary<Client, int> user = new Dictionary<Client, int>();
         int userID = 0;
-        Queue<string> queueMessage = new Queue<string>(); //add messages to queue
-
-        List<string> observer; //observer method
+        Queue<string> queueMessage = new Queue<string>();
+        Log log = new Log();
 
         public Server()
         {
-            server = new TcpListener(IPAddress.Parse("192.168.0.127"), 9999);
+            server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
             server.Start();
         }
 
-        public void Run()
+        public void Run() //Single Responsibility Principle, this method threads the Accept Client method
         {
             Task.Run(() => AcceptClient());
         }
 
         private void AcceptClient()
         {
-            
             while (true)
             {
                 TcpClient clientSocket = default(TcpClient);
                 clientSocket = server.AcceptTcpClient();
                 Console.WriteLine("Connected");
-                NetworkStream stream = clientSocket.GetStream();                
-                client = new Client(stream, clientSocket);
-                AddToDictionary(client);                
-                Task.Run(() => Recieve());
+                NetworkStream stream = clientSocket.GetStream();
+                client = new Client(stream, clientSocket, this);
+                AddToDictionary(client);
+                Task.Run(() => Recieve(client));
             }
         }
-        
         private void Send(string body)
         {
             Client temp;
             string message = body;
-            //while (true)
-            //{
-            foreach (KeyValuePair<int, Client> userID in user)
+            log.WriteToLog(message);
+            foreach (KeyValuePair<Client, int> userID in user)
             {
-                temp = userID.Value;
+                temp = userID.Key;
                 temp.Send(message);
             }
-            //}
         }
 
-        public void Recieve()
+        public void Recieve(Client client)
         {
             while (true)
             {
-                string message = client.Recieve(queueMessage);
-                Send(message);
+                try
+                {
+                    if (client.client.Connected)
+                    {
+                        string message = client.Recieve(queueMessage);
+                        Task.Run(() => Send(message));
+                    }
+                }
+                catch (Exception e)
+                {
+                    user.Remove(client);
+                    Send("Someone has left the room");
+                }
             }
         }
 
         public void AddToDictionary(Client client)
         {
             userID++;
-            user.Add(userID, client);
+            user.Add(client, userID);
         }
-
-        //dependency injection
-
-
     }
 }
