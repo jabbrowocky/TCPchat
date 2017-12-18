@@ -17,10 +17,11 @@ namespace Server
         Dictionary<Client, int> user = new Dictionary<Client, int>();
         int userID = 0;
         Queue<string> queueMessage = new Queue<string>();
-        Ilogger log = new Log();
+        Ilogger log;
 
-        public Server()
+        public Server(Ilogger logger)
         {
+            this.log = logger;
             server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
             server.Start();
         }

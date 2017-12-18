@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    interface Ilogger
+    public interface Ilogger
     {
         void WriteToLog(string text);
     }
