@@ -17,7 +17,7 @@ namespace Server
         Dictionary<Client, int> user = new Dictionary<Client, int>();
         int userID = 0;
         Queue<string> queueMessage = new Queue<string>();
-        Log log = new Log();
+        Ilogger log = new Log();
 
         public Server()
         {
