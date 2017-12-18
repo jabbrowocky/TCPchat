@@ -10,7 +10,7 @@ namespace Server
     class Log : Ilogger
     {
         StreamWriter file = new StreamWriter("log.txt", true);
-        public void WriteToLog(string text) //Dependency Inversion Principle, this log method writes to the log for every send/receive/log in/log out
+        public void WriteToLog(string text) //Dependency Inversion Principle: the server is no longer dependent on THIS specific logger, it can use any logger of type Ilogger.
         {
             
             {
