@@ -14,7 +14,6 @@ namespace Server
     {
         public static Client client;
         TcpListener server;
-
         Dictionary<Client, int> user = new Dictionary<Client, int>();
         int userID = 0;
         Queue<string> queueMessage = new Queue<string>();
